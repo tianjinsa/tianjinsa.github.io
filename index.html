@@ -6,8 +6,8 @@
     <meta name="description" content="Tianjinsa的个人网站 - 开发者、技术爱好者的个人主页，展示项目和分享技术经验">
     <meta name="keywords" content="Tianjinsa, 个人主页, 开发者, 网站开发, 云服务">
     <meta name="author" content="Tianjinsa">
-    <!-- 网站图标 -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+    <!-- 网站图标 - 使用Bootstrap图标 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 fill=%22currentColor%22 class=%22bi bi-rocket-takeoff%22 viewBox=%220 0 16 16%22><path d=%22M9.752 6.193c.599.6 1.73.437 2.528-.362s.96-1.932.362-2.531c-.599-.6-1.73-.438-2.528.361-.798.8-.96 1.933-.362 2.532%22/%3E%3Cpath d=%22M15.811 3.312c-.363 1.534-1.334 3.626-3.64 6.218l-.24 2.408a2.56 2.56 0 0 1-.732 1.526L8.817 15.85a.51.51 0 0 1-.867-.434l.27-1.899c.04-.28-.013-.593-.131-.956a9 9 0 0 0-.249-.657l-.082-.202c-.815-.197-1.578-.662-2.191-1.277-.614-.615-1.079-1.379-1.275-2.195l-.203-.083a9 9 0 0 0-.655-.248c-.363-.119-.675-.172-.955-.132l-1.896.27A.51.51 0 0 1 .15 7.17l2.382-2.386c.41-.41.947-.67 1.524-.734h.006l2.4-.238C9.005 1.55 11.087.582 12.623.208c.89-.217 1.59-.232 2.08-.188.244.023.435.06.57.093.067.017.12.033.16.045.184.06.279.13.351.295l.029.073a3.5 3.5 0 0 1 .157.721c.055.485.051 1.178-.159 2.065m-4.828 7.475.04-.04-.107 1.081a1.54 1.54 0 0 1-.44.913l-1.298 1.3.054-.38c.072-.506-.034-.993-.172-1.418a9 9 0 0 0-.164-.45c.738-.065 1.462-.38 2.087-1.006%22/%3E%3Cpath d=%22M5.205 5c-.625.626-.94 1.351-1.004 2.09a9 9 0 0 0-.45-.164c-.424-.138-.91-.244-1.416-.172l-.38.054 1.3-1.3c.245-.246.566-.401.91-.44l1.08-.107-.04.039%22/%3E%3C/svg%3E">
     <!-- 社交媒体预览 -->
     <meta property="og:title" content="Tianjinsa的个人主页">
     <meta property="og:description" content="开发者、技术爱好者的个人网站 - 展示项目和分享技术经验">
@@ -16,6 +16,8 @@
     <title>Tianjinsa 的个人主页</title>
     <!-- 引入外部样式文件 -->
     <link rel="stylesheet" href="styles.css">
+    <!-- 引入Bootstrap图标库 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body>
     <div class="container">
@@ -48,22 +50,22 @@
         <ul class="project-links">
             <li>
                 <a href="https://alist.tianjinsa.top" target="_blank" rel="noopener noreferrer">
-                    <i class="icon">🗂️</i> Alist 网盘
+                    <i class="bi bi-folder2-open icon"></i> Alist 网盘
                 </a>
             </li>
             <li>
                 <a href="https://gemini.tianjinsa.top" target="_blank" rel="noopener noreferrer">
-                    <i class="icon">🤖</i> Gemini 预览
+                    <i class="bi bi-robot icon"></i> Gemini 预览
                 </a>
             </li>
             <li>
                 <a href="https://blog.tianjinsa.top" target="_blank" rel="noopener noreferrer">
-                    <i class="icon">📝</i> 我的博客
+                    <i class="bi bi-journal-text icon"></i> 我的博客
                 </a>
             </li>
             <li>
                 <a href="https://github.com/tianjinsa" target="_blank" rel="noopener noreferrer">
-                    <i class="icon">📦</i> GitHub 仓库
+                    <i class="bi bi-github icon"></i> GitHub 仓库
                 </a>
             </li>
         </ul>
@@ -74,13 +76,13 @@
             <p>如果您对我的项目感兴趣或有任何问题，欢迎通过以下方式联系我：</p>
             <div class="social-links">
                 <!-- <a href="mailto:example@tianjinsa.top" class="social-link">
-                    <i class="icon">📧</i> Email
+                    <i class="bi bi-envelope icon"></i> Email
                 </a> -->
                 <a href="https://github.com/tianjinsa" target="_blank" rel="noopener noreferrer" class="social-link">
-                    <i class="icon">🐙</i> GitHub
+                    <i class="bi bi-github icon"></i> GitHub
                 </a>
                 <!-- <a href="https://twitter.com/tianjinsa" target="_blank" rel="noopener noreferrer" class="social-link">
-                    <i class="icon">🐦</i> Twitter
+                    <i class="bi bi-twitter-x icon"></i> Twitter
                 </a> -->
             </div>
         </div>
