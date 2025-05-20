@@ -40,7 +40,25 @@ h2 {
 
 /* 表单元素样式 */
 .form-group {
-    margin-bottom: 25px;
+    margin-bottom: 30px;
+}
+
+.form-group label {
+    font-size: 1.1em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    color: var(--text-light);
+}
+
+.form-group label::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    margin-right: 8px;
 }
 
 label {
@@ -52,19 +70,27 @@ label {
 
 input, textarea, select {
     width: 100%;
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
+    padding: 14px;
+    border-radius: 8px;
+    border: 2px solid var(--border-color);
     background-color: var(--input-bg);
     color: var(--text-color);
     font-size: 1em;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 input:focus, textarea:focus, select:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(135, 206, 235, 0.2);
+    box-shadow: 0 0 0 3px rgba(135, 206, 235, 0.3);
+    background-color: var(--input-bg-focus);
+}
+
+textarea {
+    line-height: 1.6;
+    min-height: 200px;
+    resize: vertical;
 }
 
 .password-container {
@@ -87,21 +113,55 @@ button {
     background-color: var(--primary-color);
     color: var(--text-dark);
     border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
+    padding: 14px 24px;
+    border-radius: 8px;
     font-size: 1em;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
 }
 
 button:hover {
     background-color: #6db5d9;
     transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 button:active {
-    transform: translateY(0);
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+button:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0, 0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(20, 20);
+        opacity: 0;
+    }
 }
 
 .btn-login {
@@ -174,23 +234,30 @@ button:active {
 }
 
 .blog-editor {
-    display: flex;
-    flex-direction: column; /* 改为列布局 */
-    gap: 20px; /* 增加间距 */
-    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+    margin-bottom: 25px;
 }
 
 .editor-pane,
-.preview-pane-container { /* 修改为新的容器类名 */
-    width: 100%; /* 宽度占满 */
-    /* min-height: 400px; */ /* 移除固定最小高度，改为限制高度 */
-    max-height: 50vh; /* 限制最大高度为视口高度的一半 */
-    overflow-y: auto; /* 内容超出时显示滚动条 */
+.preview-pane-container {
+    width: 100%;
+    min-height: 300px;
+    max-height: 60vh;
+    overflow-y: auto;
     border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 15px;
+    border-radius: 8px;
+    padding: 20px;
     background-color: var(--input-bg);
-    position: relative; /* 为全屏按钮定位 */
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.editor-pane:focus-within,
+.preview-pane-container:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .preview-pane-container {
@@ -223,6 +290,18 @@ button:active {
 @media (min-width: 768px) {
     .blog-editor {
         grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+    
+    .editor-pane,
+    .preview-pane-container {
+        min-height: 400px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .blog-editor {
+        gap: 40px;
     }
 }
 
