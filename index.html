@@ -3,6 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tianjinsa的个人网站 - 开发者、技术爱好者的个人主页，展示项目和分享技术经验">
+    <meta name="keywords" content="Tianjinsa, 个人主页, 开发者, 网站开发, 云服务">
+    <meta name="author" content="Tianjinsa">
+    <!-- 网站图标 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+    <!-- 社交媒体预览 -->
+    <meta property="og:title" content="Tianjinsa的个人主页">
+    <meta property="og:description" content="开发者、技术爱好者的个人网站 - 展示项目和分享技术经验">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tianjinsa.github.io/">
     <title>Tianjinsa 的个人主页</title>
     <style>
         /* 基本样式，设置暗色背景和浅色文字 */
@@ -17,16 +27,18 @@
             align-items: center;
             min-height: 100vh; /* 确保内容垂直居中 */
             line-height: 1.6;
+            background-image: linear-gradient(45deg, #1a1a1a 25%, #222222 25%, #222222 50%, #1a1a1a 50%, #1a1a1a 75%, #222222 75%, #222222 100%);
+            background-size: 40px 40px;
         }
 
         /* 容器，限制内容宽度并居中 */
         .container {
             text-align: center;
-            padding: 30px;
+            padding: 40px;
             background-color: #282828; /* 略浅的背景，与body区分 */
-            border-radius: 10px; /* 圆角 */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* 阴影效果 */
-            max-width: 600px; /* 最大宽度 */
+            border-radius: 12px; /* 圆角 */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* 增强阴影效果 */
+            max-width: 800px; /* 增加最大宽度 */
             width: 90%; /* 响应式宽度 */
         }
 
@@ -35,43 +47,183 @@
             color: #ffffff; /* 白色标题 */
             margin-bottom: 20px;
             font-size: 2.5em;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* 文字阴影 */
+            letter-spacing: 1px; /* 字母间距 */
+        }
+
+        h2 {
+            color: #ffffff;
+            font-size: 1.8em;
+            margin: 30px 0 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2:after {
+            content: '';
+            display: block;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(to right, #87ceeb, transparent);
+            margin: 8px auto 0;
         }
 
         /* 描述文字样式 */
         p {
             color: #b0b0b0; /* 稍暗的文字颜色 */
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-size: 1.1em;
         }
 
-        /* 链接列表样式 */
-        ul {
+        /* 个人简介部分 */
+        .profile-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            background-color: #87ceeb;
+            border-radius: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+            font-weight: bold;
+            color: #282828;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .bio {
+            max-width: 90%;
+            line-height: 1.8;
+        }
+
+        /* 技能展示部分 */
+        .skills-section {
+            margin: 30px 0;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .skill {
+            background-color: #333333;
+            color: #e0e0e0;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 1em;
+            border: 1px solid #444444;
+            transition: all 0.3s ease;
+        }
+
+        .skill:hover {
+            background-color: #444444;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 项目链接样式 */
+        .project-links {
             list-style: none; /* 移除列表标记 */
             padding: 0;
             margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
         }
 
-        li {
-            margin-bottom: 15px; /* 列表项间距 */
+        .project-links li {
+            margin-bottom: 20px; /* 列表项间距 */
+            width: calc(50% - 20px); /* 两列布局，有间距 */
         }
 
         /* 链接样式 */
-        a {
-            display: inline-block; /* 使链接可以设置内边距和外边距 */
+        .project-links a {
+            display: block; /* 使链接块级显示 */
             color: #87ceeb; /* 天蓝色链接颜色 */
             text-decoration: none; /* 移除下划线 */
-            font-size: 1.3em;
-            padding: 10px 20px;
-            border: 1px solid #87ceeb; /* 边框 */
-            border-radius: 5px; /* 圆角 */
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* 平滑过渡效果 */
+            font-size: 1.2em;
+            padding: 15px 20px;
+            border: 1px solid #444444; /* 深色边框 */
+            border-radius: 8px; /* 圆角 */
+            background-color: #333333; /* 深色背景 */
+            transition: all 0.3s ease; /* 平滑过渡效果 */
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* 链接悬停效果 */
-        a:hover {
-            background-color: #87ceeb; /* 悬停时背景变为链接颜色 */
-            color: #1a1a1a; /* 悬停时文字变为深色 */
-            border-color: #87ceeb; /* 悬停时边框颜色不变 */
+        .project-links a:hover {
+            background-color: #444444; /* 悬停时背景变深 */
+            color: #87ceeb; /* 保持文字颜色 */
+            transform: translateY(-5px); /* 上移效果 */
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.3); /* 增强阴影 */
+        }
+
+        /* 图标样式 */
+        .icon {
+            margin-right: 10px;
+            font-style: normal;
+        }
+
+        /* 联系部分 */
+        .contact-section {
+            margin: 40px 0 30px;
+            padding: 20px;
+            background-color: #333333;
+            border-radius: 10px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            color: #e0e0e0;
+            background-color: #444444;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 1em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background-color: #87ceeb;
+            color: #1a1a1a;
+            transform: translateY(-3px);
+        }
+
+        /* 更新信息 */
+        .update-info {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #777777;
         }
 
         /* 底部信息 */
@@ -79,36 +231,242 @@
             margin-top: 30px;
             font-size: 0.9em;
             color: #888888; /* 灰色 */
+            padding-top: 20px;
+            border-top: 1px solid #444444;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .project-links li {
+                width: 100%; /* 小屏幕下改为单列 */
+            }
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        body {
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        body.fade-in {
+            opacity: 1;
+        }
+
+        .skill {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .skill.animate {
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 波纹效果 */
+        .project-links a, .social-link {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            width: 10px;
+            height: 10px;
+            animation: ripple 0.6s linear;
+            transform-origin: center;
+            pointer-events: none;
+        }
+
+        /* 鼠标悬停时头像缓慢旋转 */
+        .avatar-placeholder {
+            transition: transform 0.8s ease;
+        }
+
+        .avatar:hover .avatar-placeholder {
+            transform: rotate(10deg) scale(1.05);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>欢迎来到 Tianjinsa 的主页</h1>
-        <p>这里是我的一些服务和项目链接：</p>
-        <ul>
+        
+        <!-- 个人简介部分 -->
+        <div class="profile-section">
+            <div class="avatar">
+                <!-- 头像占位符 -->
+                <div class="avatar-placeholder">T</div>
+            </div>
+            <p class="bio">你好！我是Tianjinsa，一名热爱技术的开发者。我专注于Web开发和云服务部署，喜欢探索新技术并分享我的经验。</p>
+        </div>
+
+        <!-- 技能展示 -->
+        <div class="skills-section">
+            <h2>我的技能</h2>
+            <div class="skills-container">
+                <div class="skill">前端开发</div>
+                <div class="skill">后端开发</div>
+                <div class="skill">云服务部署</div>
+                <div class="skill">数据分析</div>
+                <div class="skill">DevOps</div>
+            </div>
+        </div>
+
+        <!-- 服务和项目链接 -->
+        <h2>我的服务与项目</h2>
+        <p>这里是我部署的一些服务和项目链接：</p>
+        <ul class="project-links">
             <li>
                 <a href="https://alist.tianjinsa.top" target="_blank" rel="noopener noreferrer">
-                    Alist 网盘
+                    <i class="icon">🗂️</i> Alist 网盘
                 </a>
             </li>
             <li>
                 <a href="https://gemini.tianjinsa.top" target="_blank" rel="noopener noreferrer">
-                    Gemini 预览
+                    <i class="icon">🤖</i> Gemini 预览
                 </a>
             </li>
-            <!-- 你可以在这里添加更多链接 -->
-            <!--
             <li>
-                <a href="#" target="_blank" rel="noopener noreferrer">
-                    其他链接
+                <a href="https://blog.tianjinsa.top" target="_blank" rel="noopener noreferrer">
+                    <i class="icon">📝</i> 我的博客
                 </a>
             </li>
-            -->
+            <li>
+                <a href="https://github.com/tianjinsa" target="_blank" rel="noopener noreferrer">
+                    <i class="icon">📦</i> GitHub 仓库
+                </a>
+            </li>
         </ul>
+
+        <!-- 联系方式 -->
+        <div class="contact-section">
+            <h2>联系我</h2>
+            <p>如果您对我的项目感兴趣或有任何问题，欢迎通过以下方式联系我：</p>
+            <div class="social-links">
+                <a href="mailto:example@tianjinsa.top" class="social-link">
+                    <i class="icon">📧</i> Email
+                </a>
+                <a href="https://github.com/tianjinsa" target="_blank" rel="noopener noreferrer" class="social-link">
+                    <i class="icon">🐙</i> GitHub
+                </a>
+                <a href="https://twitter.com/tianjinsa" target="_blank" rel="noopener noreferrer" class="social-link">
+                    <i class="icon">🐦</i> Twitter
+                </a>
+            </div>
+        </div>
+
+        <!-- 更新时间显示 -->
+        <div class="update-info">
+            <p>最后更新于：2024年5月20日</p>
+        </div>
+
         <div class="footer">
             &copy; 2024 Tianjinsa. 保留所有权利。
         </div>
     </div>
+
+    <!-- JavaScript 交互效果 -->
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加页面淡入效果
+            document.body.classList.add('fade-in');
+            
+            // 为所有技能添加动画效果
+            const skills = document.querySelectorAll('.skill');
+            skills.forEach((skill, index) => {
+                setTimeout(() => {
+                    skill.classList.add('animate');
+                }, 200 * index);
+            });
+            
+            // 为项目链接添加点击特效
+            const links = document.querySelectorAll('.project-links a, .social-link');
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // 只对带有target="_blank"的链接执行特效
+                    if (this.getAttribute('target') === '_blank') {
+                        e.preventDefault();
+                        const href = this.getAttribute('href');
+                        
+                        // 添加点击波纹效果
+                        const ripple = document.createElement('span');
+                        ripple.classList.add('ripple-effect');
+                        this.appendChild(ripple);
+                        
+                        // 设置波纹位置
+                        const rect = this.getBoundingClientRect();
+                        ripple.style.left = `${e.clientX - rect.left}px`;
+                        ripple.style.top = `${e.clientY - rect.top}px`;
+                        
+                        // 等待动画完成后跳转
+                        setTimeout(() => {
+                            window.open(href, '_blank');
+                            ripple.remove();
+                        }, 300);
+                    }
+                });
+            });
+
+            // 添加滚动显示动画
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+
+            // 观察所有主要部分
+            document.querySelectorAll('.profile-section, .skills-section, .project-links, .contact-section').forEach(section => {
+                observer.observe(section);
+                section.classList.add('animate-on-scroll');
+            });
+        });
+    </script>
 </body>
 </html>
