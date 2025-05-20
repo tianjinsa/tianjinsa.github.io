@@ -1,0 +1,312 @@
+/* 基本样式，设置暗色背景和浅色文字 */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #1a1a1a; /* 深灰色背景 */
+    color: #e0e0e0; /* 浅灰色文字 */
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* 确保内容垂直居中 */
+    line-height: 1.6;
+    background-image: linear-gradient(45deg, #1a1a1a 25%, #222222 25%, #222222 50%, #1a1a1a 50%, #1a1a1a 75%, #222222 75%, #222222 100%);
+    background-size: 40px 40px;
+}
+
+/* 容器，限制内容宽度并居中 */
+.container {
+    text-align: center;
+    padding: 40px;
+    background-color: #282828; /* 略浅的背景，与body区分 */
+    border-radius: 12px; /* 圆角 */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* 增强阴影效果 */
+    max-width: 800px; /* 增加最大宽度 */
+    width: 90%; /* 响应式宽度 */
+}
+
+/* 标题样式 */
+h1 {
+    color: #ffffff; /* 白色标题 */
+    margin-bottom: 20px;
+    font-size: 2.5em;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* 文字阴影 */
+    letter-spacing: 1px; /* 字母间距 */
+}
+
+h2 {
+    color: #ffffff;
+    font-size: 1.8em;
+    margin: 30px 0 15px;
+    position: relative;
+    display: inline-block;
+}
+
+h2:after {
+    content: '';
+    display: block;
+    width: 60%;
+    height: 3px;
+    background: linear-gradient(to right, #87ceeb, transparent);
+    margin: 8px auto 0;
+}
+
+/* 描述文字样式 */
+p {
+    color: #b0b0b0; /* 稍暗的文字颜色 */
+    margin-bottom: 25px;
+    font-size: 1.1em;
+}
+
+/* 个人简介部分 */
+.profile-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.avatar {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background-color: #87ceeb;
+    border-radius: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3em;
+    font-weight: bold;
+    color: #282828;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.bio {
+    max-width: 90%;
+    line-height: 1.8;
+}
+
+/* 技能展示部分 */
+.skills-section {
+    margin: 30px 0;
+}
+
+.skills-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.skill {
+    background-color: #333333;
+    color: #e0e0e0;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 1em;
+    border: 1px solid #444444;
+    transition: all 0.3s ease;
+}
+
+.skill:hover {
+    background-color: #444444;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 项目链接样式 */
+.project-links {
+    list-style: none; /* 移除列表标记 */
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.project-links li {
+    margin-bottom: 20px; /* 列表项间距 */
+    width: calc(50% - 20px); /* 两列布局，有间距 */
+}
+
+/* 链接样式 */
+.project-links a {
+    display: block; /* 使链接块级显示 */
+    color: #87ceeb; /* 天蓝色链接颜色 */
+    text-decoration: none; /* 移除下划线 */
+    font-size: 1.2em;
+    padding: 15px 20px;
+    border: 1px solid #444444; /* 深色边框 */
+    border-radius: 8px; /* 圆角 */
+    background-color: #333333; /* 深色背景 */
+    transition: all 0.3s ease; /* 平滑过渡效果 */
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 链接悬停效果 */
+.project-links a:hover {
+    background-color: #444444; /* 悬停时背景变深 */
+    color: #87ceeb; /* 保持文字颜色 */
+    transform: translateY(-5px); /* 上移效果 */
+    box-shadow: 0 7px 15px rgba(0, 0, 0, 0.3); /* 增强阴影 */
+}
+
+/* 图标样式 */
+.icon {
+    margin-right: 10px;
+    font-style: normal;
+}
+
+/* 联系部分 */
+.contact-section {
+    margin: 40px 0 30px;
+    padding: 20px;
+    background-color: #333333;
+    border-radius: 10px;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    color: #e0e0e0;
+    background-color: #444444;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 1em;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.social-link:hover {
+    background-color: #87ceeb;
+    color: #1a1a1a;
+    transform: translateY(-3px);
+}
+
+/* 更新信息 */
+.update-info {
+    margin-top: 30px;
+    font-size: 0.9em;
+    color: #777777;
+}
+
+/* 底部信息 */
+.footer {
+    margin-top: 30px;
+    font-size: 0.9em;
+    color: #888888; /* 灰色 */
+    padding-top: 20px;
+    border-top: 1px solid #444444;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .container {
+        padding: 30px 20px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    .project-links li {
+        width: 100%; /* 小屏幕下改为单列 */
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+body {
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+body.fade-in {
+    opacity: 1;
+}
+
+.skill {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.skill.animate {
+    animation: fadeIn 0.5s forwards;
+}
+
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 波纹效果 */
+.project-links a, .social-link {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple-effect {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    width: 10px;
+    height: 10px;
+    animation: ripple 0.6s linear;
+    transform-origin: center;
+    pointer-events: none;
+}
+
+/* 鼠标悬停时头像缓慢旋转 */
+.avatar-placeholder {
+    transition: transform 0.8s ease;
+}
+
+.avatar:hover .avatar-placeholder {
+    transform: rotate(10deg) scale(1.05);
+}
