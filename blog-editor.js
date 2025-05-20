@@ -20,8 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 初始化Markdown预览
     initMarkdownPreview();
-    
-    // 如果localStorage中有token，尝试自动登录
+
+    // 检查并请求Token
+    checkAndPromptForToken();
+
+    // 如果cookie中有token，尝试自动登录
     tryAutoLogin();
 });
 
@@ -40,14 +43,7 @@ function cacheElements() {
         logoutButton: document.getElementById('logout-btn'),
         togglePassword: document.getElementById('toggle-password'),
         submitStatus: document.getElementById('submit-status'),
-        githubTokenInput: document.getElementById('github-token'),
-        toggleToken: document.getElementById('toggle-token'),
-        githubTokenContainer: document.querySelector('.github-token-container'),
-        fullscreenPreviewBtn: document.getElementById('fullscreen-preview'),
-        fullscreenModal: document.getElementById('fullscreen-preview-modal'),
-        fullscreenContent: document.getElementById('fullscreen-content'),
-        closeFullscreenBtn: document.getElementById('close-fullscreen'),
-        fullscreenTitle: document.getElementById('fullscreen-title')
+        fullscreenButton: document.getElementById('fullscreen-btn') // 新增全屏按钮
     };
 }
 
@@ -59,9 +55,6 @@ function setupEventListeners() {
     // 密码显示切换
     elements.togglePassword.addEventListener('click', togglePasswordVisibility);
     
-    // Token显示切换
-    elements.toggleToken && elements.toggleToken.addEventListener('click', toggleTokenVisibility);
-    
     // 实时Markdown预览
     elements.contentTextarea.addEventListener('input', updatePreview);
     
@@ -70,12 +63,11 @@ function setupEventListeners() {
     
     // 登出
     elements.logoutButton.addEventListener('click', logout);
-    
-    // 全屏预览
-    elements.fullscreenPreviewBtn && elements.fullscreenPreviewBtn.addEventListener('click', toggleFullscreenPreview);
-    
-    // 关闭全屏预览
-    elements.closeFullscreenBtn && elements.closeFullscreenBtn.addEventListener('click', toggleFullscreenPreview);
+
+    // 全屏切换
+    if (elements.fullscreenButton) {
+        elements.fullscreenButton.addEventListener('click', toggleFullScreen);
+    }
 }
 
 // 切换密码可见性
@@ -83,15 +75,6 @@ function togglePasswordVisibility() {
     const type = elements.passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
     elements.passwordInput.setAttribute('type', type);
     elements.togglePassword.textContent = type === 'password' ? '👁️' : '🔒';
-}
-
-// 切换令牌可见性
-function toggleTokenVisibility() {
-    if (!elements.githubTokenInput) return;
-    
-    const type = elements.githubTokenInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    elements.githubTokenInput.setAttribute('type', type);
-    elements.toggleToken.textContent = type === 'password' ? '👁️' : '🔒';
 }
 
 // 初始化Markdown预览
@@ -102,39 +85,6 @@ function initMarkdownPreview() {
     
     // 初始更新预览
     updatePreview();
-}
-
-// 切换全屏预览模式
-function toggleFullscreenPreview() {
-    if (!elements.fullscreenModal) return;
-    
-    const isActive = elements.fullscreenModal.classList.contains('active');
-    
-    if (isActive) {
-        // 关闭全屏预览
-        elements.fullscreenModal.classList.remove('active');
-        document.body.style.overflow = '';
-    } else {
-        // 打开全屏预览
-        // 更新标题
-        elements.fullscreenTitle.textContent = elements.titleInput.value || '博客预览';
-        
-        // 更新预览内容
-        updateFullscreenPreview();
-        
-        // 显示全屏模式
-        elements.fullscreenModal.classList.add('active');
-        document.body.style.overflow = 'hidden'; // 防止背景滚动
-    }
-}
-
-// 更新全屏预览内容
-function updateFullscreenPreview() {
-    if (!elements.fullscreenContent) return;
-    
-    // 获取预览内容
-    const previewContent = elements.previewPane.innerHTML;
-    elements.fullscreenContent.innerHTML = previewContent;
 }
 
 // 更新Markdown预览
@@ -181,26 +131,11 @@ function updatePreview() {
     html = html.replace(/<\/ol><ol>/g, '').replace(/<\/ul><ul>/g, '');
     
     elements.previewPane.innerHTML = `<div class="markdown-content">${html}</div>`;
-    
-    // 如果全屏预览模式是打开的，也更新全屏预览
-    if (elements.fullscreenModal && elements.fullscreenModal.classList.contains('active')) {
-        updateFullscreenPreview();
-    }
 }
 
 // 尝试自动登录
 function tryAutoLogin() {
-    // 优先从localStorage获取令牌
-    let token = localStorage.getItem('github_token');
-    
-    // 如果localStorage中没有，则尝试从Cookie获取
-    if (!token) {
-        token = getCookie('github_token');
-        if (token) {
-            localStorage.setItem('github_token', token);
-        }
-    }
-    
+    const token = getCookie('github_token');
     if (token) {
         // 验证token有效性
         fetch(`https://api.github.com/repos/${CONFIG.GITHUB_REPO_OWNER}/${CONFIG.GITHUB_REPO_NAME}`, {
@@ -213,17 +148,17 @@ function tryAutoLogin() {
                 showEditor();
             } else {
                 // Token无效，清除并要求重新登录
-                localStorage.removeItem('github_token');
-                // 清除Cookie中的令牌
-                document.cookie = 'github_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                deleteCookie('github_token');
+                promptForToken(); // 提示输入Token
             }
         })
         .catch(error => {
             console.error('验证token时出错:', error);
-            localStorage.removeItem('github_token');
-            // 清除Cookie中的令牌
-            document.cookie = 'github_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            deleteCookie('github_token');
+            promptForToken(); // 提示输入Token
         });
+    } else {
+        promptForToken(); // 如果没有token，提示输入
     }
 }
 
@@ -258,36 +193,22 @@ async function handleLogin(e) {
         
         // 检查密码是否正确
         if (hashedPassword === CONFIG.PASSWORD_HASH) {
-            // 检查是否有已保存的令牌
-            const savedToken = getCookie('github_token');
-            if (savedToken) {
-                // 验证令牌有效性
-                if (await validateGithubToken(savedToken)) {
-                    localStorage.setItem('github_token', savedToken);
-                    showMessage('登录成功！', 'success');
-                    setTimeout(() => {
-                        showEditor();
-                    }, 1000);
+            // 登录成功后，获取或提示用户输入Token
+            let token = getCookie('github_token');
+            if (!token) {
+                token = prompt('请输入您的GitHub Personal Access Token:', '');
+                if (token) {
+                    setCookie('github_token', token, 7); // 保存7天
+                } else {
+                    showMessage('需要GitHub Token才能继续操作', 'error');
                     return;
                 }
             }
             
-            // 显示GitHub令牌输入框
-            elements.githubTokenContainer.style.display = 'block';
-            
-            // 如果已有令牌输入，则验证并登录
-            if (elements.githubTokenInput.value) {
-                const token = elements.githubTokenInput.value;
-                if (await validateGithubToken(token)) {
-                    saveGithubToken(token);
-                    showMessage('登录成功！', 'success');
-                    setTimeout(() => {
-                        showEditor();
-                    }, 1000);
-                } else {
-                    showMessage('GitHub令牌无效，请重新输入', 'error');
-                }
-            }
+            showMessage('登录成功！', 'success');
+            setTimeout(() => {
+                showEditor();
+            }, 1000);
         } else {
             showMessage('密码不正确', 'error');
         }
@@ -295,41 +216,6 @@ async function handleLogin(e) {
         console.error('登录时出错:', error);
         showMessage('登录过程中发生错误', 'error');
     }
-}
-
-// 验证GitHub令牌是否有效
-async function validateGithubToken(token) {
-    try {
-        const response = await fetch(`https://api.github.com/repos/${CONFIG.GITHUB_REPO_OWNER}/${CONFIG.GITHUB_REPO_NAME}`, {
-            headers: {
-                'Authorization': `token ${token}`
-            }
-        });
-        return response.ok;
-    } catch (error) {
-        console.error('验证GitHub令牌时出错:', error);
-        return false;
-    }
-}
-
-// 保存GitHub令牌到Cookie
-function saveGithubToken(token) {
-    // 保存令牌到localStorage用于当前会话
-    localStorage.setItem('github_token', token);
-    
-    // 保存令牌到Cookie，有效期30天
-    const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 30);
-    document.cookie = `github_token=${token}; expires=${expiryDate.toUTCString()}; path=/; SameSite=Strict; Secure`;
-}
-
-// 从Cookie中获取GitHub令牌
-function getCookie(name) {
-    const cookieValue = document.cookie
-        .split('; ')
-        .find(row => row.startsWith(`${name}=`));
-    
-    return cookieValue ? cookieValue.split('=')[1] : null;
 }
 
 // 显示消息
@@ -355,7 +241,7 @@ function showEditor() {
 async function publishBlog() {
     const title = elements.titleInput.value.trim();
     const content = elements.contentTextarea.value.trim();
-    const token = localStorage.getItem('github_token');
+    let token = getCookie('github_token');
     
     if (!title || !content) {
         alert('标题和内容不能为空');
@@ -363,9 +249,11 @@ async function publishBlog() {
     }
     
     if (!token) {
-        alert('您需要登录才能发布博客');
-        logout();
-        return;
+        token = promptForToken();
+        if (!token) {
+             alert('您需要提供GitHub Token才能发布博客');
+             return;
+        }
     }
     
     // 显示发布状态
@@ -485,12 +373,75 @@ async function createOrUpdateFileInGitHub(path, content, token) {
 
 // 登出
 function logout() {
-    localStorage.removeItem('github_token');
-    // 清除Cookie中的令牌
-    document.cookie = 'github_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    deleteCookie('github_token');
     elements.loginContainer.style.display = 'block';
     elements.editorContainer.style.display = 'none';
     elements.passwordInput.value = '';
-    elements.githubTokenInput.value = '';
-    elements.githubTokenContainer.style.display = 'none';
 }
+
+// Cookie 操作函数
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/; SameSite=Lax; Secure";
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+function deleteCookie(name) {   
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+// 检查并提示输入Token
+function checkAndPromptForToken() {
+    if (!getCookie('github_token')) {
+        promptForToken();
+    }
+}
+
+function promptForToken() {
+    const token = prompt('请输入您的GitHub Personal Access Token (PAT):\n此Token将保存在Cookie中，用于GitHub API操作。', '');
+    if (token) {
+        setCookie('github_token', token, 7); // 保存7天
+        showMessage('Token已保存。', 'success');
+        return token;
+    } else {
+        showMessage('未提供Token。某些功能可能受限。', 'error');
+        return null;
+    }
+}
+
+// 全屏切换功能
+function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+        elements.previewPane.requestFullscreen().catch(err => {
+            alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+        });
+        elements.fullscreenButton.textContent = '退出全屏';
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+            elements.fullscreenButton.textContent = '全屏预览';
+        }
+    }
+}
+
+// 监听全屏变化事件，以便在用户通过ESC键退出全屏时更新按钮文本
+document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+        elements.fullscreenButton.textContent = '全屏预览';
+    }
+});

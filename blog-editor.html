@@ -23,14 +23,6 @@
                     <button type="button" id="toggle-password" class="toggle-password">👁️</button>
                 </div>
             </div>
-            <div class="form-group github-token-container" style="display: none;">
-                <label for="github-token">GitHub个人访问令牌（PAT）</label>
-                <div class="password-container">
-                    <input type="password" id="github-token" name="github-token" placeholder="输入GitHub令牌">
-                    <button type="button" id="toggle-token" class="toggle-password">👁️</button>
-                </div>
-                <small class="helper-text">需要具有repo权限的令牌，将会保存在浏览器中</small>
-            </div>
             <button type="submit" class="btn-login">登录</button>
         </form>
         <div id="login-message" class="login-message"></div>
@@ -57,15 +49,8 @@
             <div class="editor-pane">
                 <textarea id="blog-content" placeholder="在这里编写Markdown内容..."></textarea>
             </div>
-            <div class="preview-container">
-                <div class="preview-header">
-                    <span>预览</span>
-                    <button id="fullscreen-preview" class="btn-icon" title="全屏预览">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
-                        </svg>
-                    </button>
-                </div>
+            <div id="preview-pane-container" class="preview-pane-container">
+                <button id="fullscreen-btn" class="fullscreen-btn">全屏预览</button>
                 <div id="preview-pane" class="preview-pane"></div>
             </div>
         </div>
@@ -90,20 +75,6 @@
                 <li>1. 有序列表项</li>
             </ul>
         </div>
-    </div>
-
-    <!-- 全屏预览模式 -->
-    <div id="fullscreen-preview-modal" class="fullscreen-modal">
-        <div class="fullscreen-modal-header">
-            <h2 id="fullscreen-title">博客预览</h2>
-            <button id="close-fullscreen" class="btn-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-        </div>
-        <div id="fullscreen-content" class="fullscreen-content"></div>
     </div>
 
     <!-- GitHub API操作提示 -->
