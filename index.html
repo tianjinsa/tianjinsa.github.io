@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tianjinsa 的个人主页</title>
+    <style>
+        /* 基本样式，设置暗色背景和浅色文字 */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a; /* 深灰色背景 */
+            color: #e0e0e0; /* 浅灰色文字 */
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* 确保内容垂直居中 */
+            line-height: 1.6;
+        }
+
+        /* 容器，限制内容宽度并居中 */
+        .container {
+            text-align: center;
+            padding: 30px;
+            background-color: #282828; /* 略浅的背景，与body区分 */
+            border-radius: 10px; /* 圆角 */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* 阴影效果 */
+            max-width: 600px; /* 最大宽度 */
+            width: 90%; /* 响应式宽度 */
+        }
+
+        /* 标题样式 */
+        h1 {
+            color: #ffffff; /* 白色标题 */
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+
+        /* 描述文字样式 */
+        p {
+            color: #b0b0b0; /* 稍暗的文字颜色 */
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        /* 链接列表样式 */
+        ul {
+            list-style: none; /* 移除列表标记 */
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            margin-bottom: 15px; /* 列表项间距 */
+        }
+
+        /* 链接样式 */
+        a {
+            display: inline-block; /* 使链接可以设置内边距和外边距 */
+            color: #87ceeb; /* 天蓝色链接颜色 */
+            text-decoration: none; /* 移除下划线 */
+            font-size: 1.3em;
+            padding: 10px 20px;
+            border: 1px solid #87ceeb; /* 边框 */
+            border-radius: 5px; /* 圆角 */
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* 平滑过渡效果 */
+        }
+
+        /* 链接悬停效果 */
+        a:hover {
+            background-color: #87ceeb; /* 悬停时背景变为链接颜色 */
+            color: #1a1a1a; /* 悬停时文字变为深色 */
+            border-color: #87ceeb; /* 悬停时边框颜色不变 */
+        }
+
+        /* 底部信息 */
+        .footer {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #888888; /* 灰色 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>欢迎来到 Tianjinsa 的主页</h1>
+        <p>这里是我的一些服务和项目链接：</p>
+        <ul>
+            <li>
+                <a href="https://alist.tianjinsa.top" target="_blank" rel="noopener noreferrer">
+                    Alist 网盘
+                </a>
+            </li>
+            <li>
+                <a href="https://gemini.tianjinsa.top" target="_blank" rel="noopener noreferrer">
+                    Gemini 预览
+                </a>
+            </li>
+            <!-- 你可以在这里添加更多链接 -->
+            <!--
+            <li>
+                <a href="#" target="_blank" rel="noopener noreferrer">
+                    其他链接
+                </a>
+            </li>
+            -->
+        </ul>
+        <div class="footer">
+            &copy; 2024 Tianjinsa. 保留所有权利。
+        </div>
+    </div>
+</body>
+</html>
