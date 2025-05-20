@@ -21,6 +21,7 @@ body {
     color: var(--text-color);
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.6;
+    /* Added from main styles.css */
     background-image: linear-gradient(45deg, #1a1a1a 25%, #222222 25%, #222222 50%, #1a1a1a 50%, #1a1a1a 75%, #222222 75%, #222222 100%);
     background-size: 40px 40px;
     background-attachment: fixed;
@@ -48,16 +49,16 @@ p {
 
 /* 博客编辑器特有样式 */
 .login-container, .editor-container {
-    max-width: 872px;
+    max-width: 800px; /* Unified max-width */
     margin: 50px auto;
-    padding: 30px;
+    padding: 40px; /* Adjusted padding */
     background-color: var(--content-bg);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* Adjusted box-shadow */
     border-radius: 12px;
 }
 
 .login-container {
-    max-width: 500px;
+    /* max-width: 500px; */ /* Removed to use the unified 800px */
     text-align: center;
 }
 
@@ -171,11 +172,11 @@ button:active {
 /* 编辑器样式 */
 .editor-container {
     display: none;
-    max-width: 872px; /* 保持最大宽度 */
+    /* max-width: 872px; */ /* Removed to use the unified 800px */
     margin: 50px auto;
-    padding: 30px;
+    padding: 40px; /* Adjusted padding */
     background-color: var(--content-bg);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* Adjusted box-shadow */
     border-radius: 12px;
 }
 

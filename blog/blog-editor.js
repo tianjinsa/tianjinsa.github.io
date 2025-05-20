@@ -227,136 +227,165 @@ function showEditor() {
     elements.editorContainer.style.display = 'block';
 }
 
-// 发布博客
+// 发布博客文章
 async function publishBlog() {
     const title = elements.titleInput.value.trim();
     const content = elements.contentTextarea.value.trim();
     const token = localStorage.getItem('github_token');
-    
+
     if (!title || !content) {
-        alert('标题和内容不能为空');
+        displaySubmitStatus('标题和内容不能为空', 'error');
         return;
     }
-    
+
     if (!token) {
-        alert('您需要登录才能发布博客');
-        logout();
+        displaySubmitStatus('未授权，请重新登录', 'error');
+        showLogin();
         return;
     }
-    
-    // 显示发布状态
-    elements.submitStatus.innerHTML = '<span class="loading-spinner"></span> 正在发布，请稍候...';
-    elements.submitStatus.style.display = 'block';
+
+    // 显示加载状态
     elements.publishButton.disabled = true;
-    
+    elements.publishButton.textContent = '发布中...';
+    displaySubmitStatus('正在准备发布...', 'info');
+
     try {
-        // 准备文件名和路径
-        const fileName = createSafeFileName(title) + '.md';
-        const filePath = CONFIG.BLOG_PATH + fileName;
-        
-        // 准备文件内容（添加frontmatter）
-        const date = new Date().toISOString();
+        // 生成文件名 (基于标题和日期)
+        const date = new Date();
+        const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        // 移除非法字符，并将空格替换为连字符
+        const safeTitle = title.replace(/[\\/:*?"<>|\s]/g, '-').toLowerCase();
+        const fileName = `${dateString}-${safeTitle}.md`;
+
+        // 创建Markdown文件内容，包含元信息 (Front Matter)
         const fileContent = `---
 title: "${title}"
-date: "${date}"
+date: ${date.toISOString()}
+layout: post
 ---
 
 ${content}`;
-        
-        // 在真实环境中，这里应该调用GitHub API来创建或更新文件
-        // 以下是通过GitHub API创建文件的示例代码
-        const success = await createOrUpdateFileInGitHub(filePath, fileContent, token);
-        
-        if (success) {
-            elements.submitStatus.innerHTML = '✅ 发布成功！';
-            elements.submitStatus.className = 'submit-status success-message';
-            
-            // 清空表单
-            setTimeout(() => {
-                elements.titleInput.value = '';
-                elements.contentTextarea.value = '';
-                updatePreview();
-                elements.submitStatus.style.display = 'none';
-                elements.publishButton.disabled = false;
-            }, 2000);
-        } else {
-            throw new Error('发布失败');
-        }
-    } catch (error) {
-        console.error('发布博客时出错:', error);
-        elements.submitStatus.innerHTML = '❌ 发布失败: ' + error.message;
-        elements.submitStatus.className = 'submit-status error-message';
-        elements.publishButton.disabled = false;
-    }
-}
 
-// 创建安全的文件名
-function createSafeFileName(title) {
-    // 生成基于日期和标题的文件名
-    const date = new Date().toISOString().split('T')[0]; // 格式: YYYY-MM-DD
-    const safeName = title
-        .toLowerCase()
-        .replace(/[^\w\s-]/g, '') // 移除特殊字符
-        .replace(/\s+/g, '-')     // 将空格替换为短横线
-        .replace(/-+/g, '-');     // 合并多个短横线
-    
-    return `${date}-${safeName}`;
-}
+        const filePath = `${CONFIG.BLOG_PATH}_posts/${fileName}`; // 修改路径以符合Jekyll的 _posts 结构
 
-// 通过GitHub API创建或更新文件
-async function createOrUpdateFileInGitHub(path, content, token) {
-    // 这个函数在实际使用中需要完整实现
-    // 以下是一个简化的示例，仅作为参考
-    
-    try {
-        // 1. 检查文件是否已存在
-        let sha = null;
+        // 检查文件是否存在
+        let fileExists = false;
+        let existingFileSha = null;
         try {
-            const response = await fetch(`https://api.github.com/repos/${CONFIG.GITHUB_REPO_OWNER}/${CONFIG.GITHUB_REPO_NAME}/contents/${path}`, {
-                headers: {
-                    'Authorization': `token ${token}`
-                }
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                sha = data.sha;
+            const existingFile = await getGithubFile(filePath, token);
+            if (existingFile) {
+                fileExists = true;
+                existingFileSha = existingFile.sha;
+                displaySubmitStatus('文件已存在，将进行更新。', 'info');
             }
         } catch (error) {
-            // 文件不存在，忽略错误
+            // 文件不存在是正常的，继续创建
+            if (error.message.includes('404')) {
+                displaySubmitStatus('创建新博文...', 'info');
+            } else {
+                throw error; // 其他错误则抛出
+            }
         }
-        
-        // 2. 创建或更新文件
-        const endpoint = `https://api.github.com/repos/${CONFIG.GITHUB_REPO_OWNER}/${CONFIG.GITHUB_REPO_NAME}/contents/${path}`;
-        const body = {
-            message: sha ? `更新博客: ${path}` : `创建博客: ${path}`,
-            content: btoa(unescape(encodeURIComponent(content))), // Base64编码
-            branch: 'main' // 或者是你的默认分支
-        };
-        
-        if (sha) {
-            body.sha = sha;
-        }
-        
-        const response = await fetch(endpoint, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `token ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        });
-        
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || '请求失败');
-        }
-        
-        return true;
+
+        // 上传或更新文件到GitHub
+        await uploadToGithub(filePath, fileContent, token, existingFileSha);
+
+        displaySubmitStatus('博客发布成功！', 'success');
+        elements.titleInput.value = '';
+        elements.contentTextarea.value = '';
+        updatePreview(); // 清空预览
+
     } catch (error) {
-        console.error('GitHub API请求失败:', error);
-        throw error;
+        console.error('发布失败:', error);
+        let errorMessage = '发布失败，请检查网络连接或GitHub配置。';
+        if (error.message.includes('401')) {
+            errorMessage = 'GitHub Token无效或已过期，请重新登录。';
+            logout(); // Token无效，强制登出
+        } else if (error.message.includes('404') && error.message.includes('repository not found')) {
+            errorMessage = '仓库未找到，请检查GitHub用户名和仓库名配置。';
+        } else if (error.message.includes('rate limit exceeded')) {
+            errorMessage = 'GitHub API请求频率超限，请稍后再试。';
+        }
+        displaySubmitStatus(errorMessage, 'error');
+    } finally {
+        elements.publishButton.disabled = false;
+        elements.publishButton.textContent = '发布博客';
     }
+}
+
+// 从GitHub获取文件 (用于检查文件是否存在及其SHA)
+async function getGithubFile(filePath, token) {
+    const url = `https://api.github.com/repos/${CONFIG.GITHUB_REPO_OWNER}/${CONFIG.GITHUB_REPO_NAME}/contents/${filePath}`;
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
+        }
+    });
+
+    if (response.status === 404) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`File not found (404): ${errorData.message || 'Unknown error'}`);
+    }
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`获取文件失败 (${response.status}): ${errorData.message || 'Unknown error'}`);
+    }
+    return await response.json();
+}
+
+// 上传文件到GitHub
+async function uploadToGithub(filePath, content, token, sha) {
+    const url = `https://api.github.com/repos/${CONFIG.GITHUB_REPO_OWNER}/${CONFIG.GITHUB_REPO_NAME}/contents/${filePath}`;
+    
+    const body = {
+        message: `博客文章: ${elements.titleInput.value.trim()}`, // 提交信息
+        content: btoa(unescape(encodeURIComponent(content))), // Base64编码，并处理UTF-8字符
+        branch: 'main' // 或者你的默认分支
+    };
+
+    if (sha) {
+        body.sha = sha; // 如果是更新操作，需要提供文件的SHA
+    }
+
+    const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({})); // 尝试解析错误信息
+        let errorMessage = `GitHub API错误 (${response.status})`;
+        if (errorData && errorData.message) {
+            errorMessage += `: ${errorData.message}`;
+        }
+        // 特别处理401和404错误
+        if (response.status === 401) {
+            throw new Error('GitHub Token无效或已过期 (401)');
+        } else if (response.status === 404 && errorData.message && errorData.message.toLowerCase().includes('repository not found')) {
+            throw new Error('仓库未找到 (404)');
+        } else if (response.status === 422 && errorData.message && errorData.message.toLowerCase().includes('sha' )) {
+             throw new Error('文件内容冲突或SHA已过时 (422)，请刷新页面重试。');
+        }
+        throw new Error(errorMessage);
+    }
+
+    return await response.json();
+}
+
+// 显示发布状态
+function displaySubmitStatus(message, type) {
+    elements.submitStatus.textContent = message;
+    elements.submitStatus.className = 'submit-status';
+    elements.submitStatus.classList.add(type === 'error' ? 'error-message' : type === 'success' ? 'success-message' : 'info-message');
+    elements.submitStatus.style.display = 'block';
 }
 
 // 切换预览区域全屏
