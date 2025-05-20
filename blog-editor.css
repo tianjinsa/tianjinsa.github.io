@@ -1,4 +1,4 @@
-/* 博客编辑器样式 */
+/* 基本变量 */
 :root {
     --primary-color: #87ceeb;
     --dark-bg: #1a1a1a;
@@ -10,6 +10,13 @@
     --text-dark: #282828;
     --red: #e74c3c;
     --green: #2ecc71;
+}
+
+/* 基本样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -24,18 +31,13 @@ body {
     min-height: 100vh;
 }
 
-.login-container, .editor-container {
+.container {
     max-width: 900px;
     margin: 50px auto;
     padding: 30px;
     background-color: var(--content-bg);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     border-radius: 12px;
-}
-
-.login-container {
-    max-width: 500px;
-    text-align: center;
 }
 
 h1 {
@@ -55,9 +57,15 @@ h2 {
     display: inline-block;
 }
 
-/* 表单元素样式 */
+h3 {
+    color: #ffffff;
+    margin: 20px 0 10px;
+    font-size: 1.4em;
+}
+
+/* 表单样式 */
 .form-group {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 label {
@@ -67,7 +75,7 @@ label {
     color: var(--text-light);
 }
 
-input, textarea, select {
+.form-control {
     width: 100%;
     padding: 12px;
     border-radius: 6px;
@@ -78,26 +86,389 @@ input, textarea, select {
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-input:focus, textarea:focus, select:focus {
+.form-control:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(135, 206, 235, 0.2);
 }
 
-.password-container {
-    position: relative;
+.checkbox {
+    display: flex;
+    align-items: center;
 }
 
-.toggle-password {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
+.checkbox input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+/* 按钮样式 */
+.btn {
+    background-color: var(--primary-color);
+    color: var(--text-dark);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn:hover {
+    background-color: #6db5d9;
+    transform: translateY(-2px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background-color: #555555;
+    color: var(--text-color);
+    margin-left: 10px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-secondary:hover {
+    background-color: #666666;
+}
+
+.btn-icon {
     background: none;
     border: none;
     color: var(--text-light);
     cursor: pointer;
     font-size: 1.2em;
+    padding: 5px;
+    margin: 0;
+}
+
+/* 认证部分 */
+.auth-section {
+    text-align: center;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.hidden {
+    display: none;
+}
+
+/* 状态消息 */
+.status-message {
+    margin-top: 20px;
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+    display: none;
+}
+
+.status-message.error {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: var(--red);
+    border: 1px solid rgba(231, 76, 60, 0.5);
+}
+
+.status-message.success {
+    background-color: rgba(46, 204, 113, 0.2);
+    color: var(--green);
+    border: 1px solid rgba(46, 204, 113, 0.5);
+}
+
+/* 编辑器布局 */
+.editor-nav {
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+.publish-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.blog-editor {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(250px, auto) minmax(250px, auto);
+    gap: 20px;
+}
+
+.editor-container {
+    position: relative;
+}
+
+.markdown-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+    background-color: var(--input-bg);
+    padding: 8px;
+    border-radius: 6px 6px 0 0;
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+}
+
+.markdown-tool {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.markdown-tool:hover {
+    background-color: var(--primary-color);
+    color: var(--text-dark);
+}
+
+#markdown-editor {
+    min-height: 250px;
+    resize: vertical;
+    font-family: 'Courier New', Courier, monospace;
+    line-height: 1.5;
+    tab-size: 2;
+    border-radius: 0 0 6px 6px;
+}
+
+#preview-container {
+    position: relative;
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#preview-content {
+    padding: 15px;
+    min-height: 250px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+#preview-container.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--content-bg);
+    z-index: 1000;
+    border-radius: 0;
+}
+
+#preview-container.fullscreen .preview-header {
+    padding: 15px 20px;
+}
+
+#preview-container.fullscreen #preview-content {
+    max-height: calc(100vh - 60px);
+}
+
+/* Markdown 预览内容样式 */
+.markdown-preview h1,
+.markdown-preview h2,
+.markdown-preview h3,
+.markdown-preview h4,
+.markdown-preview h5,
+.markdown-preview h6 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.markdown-preview h1 {
+    font-size: 1.8em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+
+.markdown-preview h2 {
+    font-size: 1.5em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+
+.markdown-preview p {
+    margin-bottom: 15px;
+}
+
+.markdown-preview a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.markdown-preview a:hover {
+    text-decoration: underline;
+}
+
+.markdown-preview img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 15px auto;
+    border-radius: 5px;
+}
+
+.markdown-preview code {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+.markdown-preview pre {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin: 15px 0;
+}
+
+.markdown-preview pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+.markdown-preview blockquote {
+    border-left: 4px solid var(--primary-color);
+    padding: 10px 15px;
+    margin: 15px 0;
+    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--text-light);
+}
+
+.markdown-preview ul,
+.markdown-preview ol {
+    margin: 15px 0;
+    padding-left: 25px;
+}
+
+.markdown-preview li {
+    margin-bottom: 5px;
+}
+
+/* Markdown 指南 */
+.markdown-guide {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+}
+
+.markdown-guide h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.markdown-guide ul {
+    list-style-type: none;
+    padding-left: 10px;
+}
+
+.markdown-guide li {
+    margin-bottom: 8px;
+}
+
+.markdown-guide code {
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* 页脚信息 */
+.github-info {
+    text-align: center;
+    margin: 40px 0;
+    font-size: 0.8em;
+    color: #777777;
+}
+
+/* 加载动画 */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        margin: 20px;
+        padding: 20px;
+    }
+    
+    .publish-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .btn-secondary {
+        margin-left: 0;
+    }
+}
+
+/* Token 容器 */
+#token-container {
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: rgba(40, 40, 40, 0.7);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    animation: fadeIn 0.3s ease;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+.info-message {
+    background-color: rgba(64, 115, 158, 0.2);
+    color: #87ceeb;
+    border: 1px solid rgba(64, 115, 158, 0.5);
 }
 
 button {
@@ -187,13 +558,57 @@ button:active {
 .blog-editor {
     display: grid;
     grid-template-columns: 1fr;
+    grid-template-rows: minmax(250px, auto) minmax(250px, auto);
     gap: 20px;
 }
 
-@media (min-width: 768px) {
-    .blog-editor {
-        grid-template-columns: 1fr 1fr;
-    }
+#preview-container {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+#fullscreen-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(40, 40, 40, 0.7);
+    color: #e0e0e0;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.2s;
+    padding: 0;
+}
+
+#fullscreen-btn:hover {
+    background-color: rgba(60, 60, 60, 0.9);
+}
+
+#preview-container.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #282828;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#preview-container.fullscreen #preview-pane {
+    width: 100%;
+    max-width: 1000px;
+    height: 100%;
+    overflow-y: auto;
 }
 
 .preview-pane {
@@ -201,12 +616,14 @@ button:active {
     padding: 20px;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    min-height: 400px;
+    min-height: 250px;
+    max-height: 500px;
     overflow-y: auto;
 }
 
 textarea#blog-content {
-    min-height: 400px;
+    min-height: 250px;
+    max-height: 500px;
     font-family: monospace;
     resize: vertical;
     line-height: 1.5;
