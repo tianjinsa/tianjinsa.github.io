@@ -21,37 +21,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化Markdown预览
     initMarkdownPreview();
     
-    // 移除 tryAutoLogin() 调用，管理员密码总是在进入页面时要求
+    // 直接显示编辑器，不再需要管理员登录
+    showEditor(); 
 });
 
 // 缓存DOM元素
 function cacheElements() {
     elements = {
-        loginForm: document.getElementById('login-form'),
-        passwordInput: document.getElementById('password'),
-        loginMessage: document.getElementById('login-message'),
-        loginContainer: document.querySelector('.login-container'),
+        loginContainer: document.querySelector('.login-container'), // Will be kept hidden
         editorContainer: document.querySelector('.editor-container'),
         titleInput: document.getElementById('blog-title'),
         contentTextarea: document.getElementById('blog-content'),
         previewPane: document.getElementById('preview-pane'),
-        previewPaneContainer: document.getElementById('preview-pane-container'), // 新增
-        fullscreenPreviewBtn: document.getElementById('fullscreen-preview-btn'), // 新增
+        previewPaneContainer: document.getElementById('preview-pane-container'), 
+        fullscreenPreviewBtn: document.getElementById('fullscreen-preview-btn'), 
         publishButton: document.getElementById('publish-btn'),
         logoutButton: document.getElementById('logout-btn'),
-        togglePassword: document.getElementById('toggle-password'),
         submitStatus: document.getElementById('submit-status')
     };
+    // Ensure login container is hidden by default if it exists
+    if (elements.loginContainer) {
+        elements.loginContainer.style.display = 'none';
+    }
 }
 
 // 设置事件监听器
 function setupEventListeners() {
-    // 登录表单提交
-    elements.loginForm.addEventListener('submit', handleLogin);
-    
-    // 密码显示切换
-    elements.togglePassword.addEventListener('click', togglePasswordVisibility);
-    
     // 实时Markdown预览
     elements.contentTextarea.addEventListener('input', updatePreview);
     
@@ -65,13 +60,6 @@ function setupEventListeners() {
     if (elements.fullscreenPreviewBtn) {
         elements.fullscreenPreviewBtn.addEventListener('click', toggleFullScreenPreview);
     }
-}
-
-// 切换密码可见性
-function togglePasswordVisibility() {
-    const type = elements.passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    elements.passwordInput.setAttribute('type', type);
-    elements.togglePassword.textContent = type === 'password' ? '👁️' : '🔒';
 }
 
 // 初始化Markdown预览
@@ -120,36 +108,6 @@ async function hashPassword(password) {
     return hashHex;
 }
 
-// 处理登录
-async function handleLogin(e) {
-    e.preventDefault();
-
-    const password = elements.passwordInput.value;
-
-    if (!password) {
-        showMessage('请输入管理员密码', 'error'); // 更新提示信息
-        return;
-    }
-
-    try {
-        // 计算密码哈希
-        const hashedPassword = await hashPassword(password);
-
-        // 检查密码是否正确
-        if (hashedPassword === CONFIG.PASSWORD_HASH) {
-            showMessage('管理员登录成功！', 'success'); // 更新提示信息
-            setTimeout(() => {
-                showEditor();
-            }, 1000);
-        } else {
-            showMessage('管理员密码不正确', 'error'); // 更新提示信息
-        }
-    } catch (error) {
-        console.error('登录时出错:', error);
-        showMessage('登录过程中发生错误', 'error');
-    }
-}
-
 // 显示消息
 function showMessage(message, type) {
     elements.loginMessage.textContent = message;
@@ -165,8 +123,8 @@ function showMessage(message, type) {
 
 // 显示编辑器
 function showEditor() {
-    elements.loginContainer.style.display = 'none';
-    elements.editorContainer.style.display = 'block';
+    if(elements.loginContainer) elements.loginContainer.style.display = 'none'; // Ensure login form is hidden
+    if(elements.editorContainer) elements.editorContainer.style.display = 'block';
 }
 
 // 发布博客文章
@@ -356,7 +314,8 @@ function toggleFullScreenPreview() {
 // 登出
 function logout() {
     localStorage.removeItem('github_token');
-    elements.loginContainer.style.display = 'block';
-    elements.editorContainer.style.display = 'none';
-    elements.passwordInput.value = '';
+    if(elements.editorContainer) elements.editorContainer.style.display = 'none';
+    if(elements.loginContainer) elements.loginContainer.style.display = 'none'; // Keep login form hidden
+    if(elements.submitStatus) displaySubmitStatus('您已登出。下次发布时将需要 GitHub 令牌。', 'info');
+    else alert('您已登出。下次发布时将需要 GitHub 令牌。');
 }
