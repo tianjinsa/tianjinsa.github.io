@@ -1,0 +1,429 @@
+/* 博客编辑器样式 */
+
+:root {
+    --primary-color: #87ceeb;
+    --dark-bg: #1a1a1a;
+    --content-bg: #282828;
+    --input-bg: #333333;
+    --border-color: #444444;
+    --text-color: #e0e0e0;
+    --text-light: #b0b0b0;
+    --text-dark: #282828;
+    --red: #e74c3c;
+    --green: #2ecc71;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--dark-bg);
+    color: var(--text-color);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    /* Added from main styles.css */
+    background-image: linear-gradient(45deg, #1a1a1a 25%, #222222 25%, #222222 50%, #1a1a1a 50%, #1a1a1a 75%, #222222 75%, #222222 100%);
+    background-size: 40px 40px;
+    background-attachment: fixed;
+    display: block; /* 覆盖styles.css中的flex布局 */
+    justify-content: initial;
+    align-items: initial;
+}
+
+p {
+    color: #b0b0b0; /* 稍暗的文字颜色 */
+    margin-bottom: 25px;
+    font-size: 1.1em;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2em;
+    }
+}
+
+
+/* 博客编辑器特有样式 */
+.login-container, .editor-container {
+    max-width: 980px; /* Unified max-width */
+    margin: 50px auto;
+    padding: 40px; /* Adjusted padding */
+    background-color: var(--content-bg);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* Adjusted box-shadow */
+    border-radius: 12px;
+}
+
+.login-container {
+    /* max-width: 500px; */ /* Removed to use the unified 800px */
+    text-align: center;
+}
+
+h1 {
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.2em;
+    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    color: #ffffff;
+    margin: 25px 0 15px;
+    font-size: 1.7em;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 8px;
+    display: inline-block;
+}
+
+/* 表单元素样式 */
+.form-group {
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-light);
+}
+
+input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-size: 1em;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(135, 206, 235, 0.2);
+}
+
+.password-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 1.2em;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: var(--text-dark);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+button:hover {
+    background-color: #6db5d9;
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.btn-login {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.login-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+}
+
+.error-message {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: var(--red);
+    border: 1px solid rgba(231, 76, 60, 0.5);
+}
+
+.success-message {
+    background-color: rgba(46, 204, 113, 0.2);
+    color: var(--green);
+    border: 1px solid rgba(46, 204, 113, 0.5);
+}
+
+/* 编辑器样式 */
+.editor-container {
+    display: none;
+    /* max-width: 872px; */ /* Removed to use the unified 800px */
+    margin: 50px auto;
+    padding: 40px; /* Adjusted padding */
+    background-color: var(--content-bg);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* Adjusted box-shadow */
+    border-radius: 12px;
+}
+
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.editor-header h1 {
+    margin: 0;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-secondary {
+    background-color: #555555;
+    color: var(--text-color);
+}
+
+.btn-secondary:hover {
+    background-color: #666666;
+}
+
+.btn-danger {
+    background-color: var(--red);
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+.blog-editor {
+    display: flex;
+    flex-direction: column; /* 改为列布局 */
+    gap: 20px; /* 增加间距 */
+    margin-bottom: 20px;
+}
+
+.editor-pane,
+.preview-pane-container { /* 修改为新的容器类名 */
+    width: 59.1vw; /* 宽度占满 */
+    /* min-height: 400px; */ /* 移除固定最小高度，改为限制高度 */
+    max-height: 50vh; /* 限制最大高度为视口高度的一半 */
+    overflow-y: auto; /* 内容超出时显示滚动条 */
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 15px;
+    background-color: var(--input-bg);
+    position: relative; /* 为全屏按钮定位 */
+}
+
+.preview-pane-container {
+    position: relative; /* 确保全屏按钮相对于此容器定位 */
+    overflow: hidden; /* 确保内容超出时显示滚动条，但按钮不受影响 */
+    padding-top: 40px; /* 为按钮预留空间 */
+}
+
+.preview-pane {
+    width: 100%;
+    height: calc(100% - 30px); /* 减去按钮高度 */
+    overflow-y: auto;
+    padding-top: 5px;
+}
+
+.fullscreen-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 1.2em;
+    z-index: 100; /* 确保按钮在预览内容之上 */
+    transition: all 0.2s ease;
+}
+
+.fullscreen-btn:hover {
+    background-color: rgba(0,0,0,0.7);
+    transform: scale(1.1);
+}
+
+#blog-content {
+    height: 45vh; /* 编辑器高度 */
+    width: 59.5vw;
+    resize: vertical;
+}
+
+@media (min-width: 768px) {
+    .blog-editor {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.markdown-content h1 {
+    text-align: left;
+    font-size: 1.8em;
+    margin-top: 0;
+}
+
+.markdown-content h2 {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+    font-size: 1.5em;
+}
+
+.markdown-content pre {
+    background-color: #222222;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+
+.markdown-content code {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 2px 5px;
+    border-radius: 3px;
+}
+
+.markdown-content pre code {
+    background-color: transparent;
+    padding: 0;
+}
+
+.markdown-content blockquote {
+    border-left: 4px solid var(--primary-color);
+    padding-left: 15px;
+    margin-left: 0;
+    color: var(--text-light);
+}
+
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+    border-radius: 5px;
+}
+
+.markdown-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.markdown-content th, .markdown-content td {
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.markdown-content th {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.markdown-content a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.markdown-content a:hover {
+    text-decoration: underline;
+}
+
+/* 提交状态 */
+.submit-status {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+    display: none;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+/* 其他元素的辅助样式 */
+.flex-row {
+    display: flex;
+    gap: 15px;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 全屏预览样式 */
+.preview-pane-container.fullscreen {
+    position: fixed;
+    top: 5vh;
+    left: 5vw;
+    width: 90vw;
+    height: 90vh;
+    max-height: 90vh; /* 覆盖之前的max-height */
+    background-color: var(--content-bg);
+    z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden; /* 修改为hidden，避免全屏时按钮位置问题 */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+}
+
+.preview-pane-container.fullscreen .preview-pane {
+    height: calc(100% - 40px); /* 留出一些空间给关闭按钮等 */
+    overflow-y: auto; /* 确保内容可以滚动 */
+    padding-top: 10px;
+}
+
+.preview-pane-container.fullscreen .fullscreen-btn {
+    /* 调整全屏模式下按钮的样式和位置 */
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    font-size: 1.5em;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 8px 12px;
+    float: none;
+    margin: 0;
+}
+
+/* 全屏模式下的遮罩层 */
+.fullscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}

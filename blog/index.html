@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tianjinsa的博客 - 分享技术文章和个人心得">
+    <meta name="keywords" content="Tianjinsa, 博客, 技术分享, 开发笔记">
+    <meta name="author" content="Tianjinsa">
+    <!-- 网站图标 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+    <!-- 社交媒体预览 -->
+    <meta property="og:title" content="Tianjinsa的博客">
+    <meta property="og:description" content="技术分享和个人心得">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tianjinsa.github.io/blog/">
+    <title>Tianjinsa的博客</title>
+    <!-- 引入样式文件 -->
+    <link rel="stylesheet" href="../styles.css">
+    <style>
+        .blog-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: #282828;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        .blog-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .blog-header h1 {
+            margin-bottom: 10px;
+        }
+        
+        .blog-header p {
+            color: #b0b0b0;
+            font-size: 1.1em;
+        }
+        
+        .blog-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .blog-item {
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #444444;
+        }
+        
+        .blog-item:last-child {
+            border-bottom: none;
+        }
+        
+        .blog-title {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        
+        .blog-title a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .blog-title a:hover {
+            color: #87ceeb;
+        }
+        
+        .blog-date {
+            font-size: 0.9em;
+            color: #888888;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .blog-excerpt {
+            color: #b0b0b0;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .read-more {
+            display: inline-block;
+            color: #87ceeb;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .read-more:hover {
+            color: #ffffff;
+            transform: translateX(5px);
+        }
+        
+        .no-blogs {
+            text-align: center;
+            padding: 50px 0;
+            color: #888888;
+        }
+        
+        .home-link {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            color: #87ceeb;
+            text-decoration: none;
+        }
+        
+        .home-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body style="background-color: #1a1a1a; background-image: linear-gradient(45deg, #1a1a1a 25%, #222222 25%, #222222 50%, #1a1a1a 50%, #1a1a1a 75%, #222222 75%, #222222 100%); background-size: 40px 40px; background-attachment: fixed;">
+    <div class="blog-container">
+        <div class="blog-header">
+            <h1>Tianjinsa的博客</h1>
+            <p>分享技术文章和个人心得</p>
+        </div>
+        
+        <div id="blog-content">
+            <!-- 博客列表将通过JavaScript动态加载 -->
+            <div class="no-blogs">
+                <p>正在加载博客内容...</p>
+            </div>
+        </div>
+        
+        <a href="../index.html" class="home-link">返回主页</a>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const blogContentEl = document.getElementById('blog-content');
+            const repoOwner = 'tianjinsa';
+            const repoName = 'tianjinsa.github.io';
+            const blogPath = 'blog';
+            
+            // 从GitHub获取博客文件列表
+            fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${blogPath}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('获取博客列表失败');
+                    }
+                    return response.json();
+                })
+                .then(files => {
+                    // 过滤出.md文件并按日期排序
+                    const blogFiles = files
+                        .filter(file => file.name.endsWith('.md'))
+                        .sort((a, b) => {
+                            // 假设文件名格式为: YYYY-MM-DD-title.md
+                            const dateA = a.name.substring(0, 10);
+                            const dateB = b.name.substring(0, 10);
+                            return dateB.localeCompare(dateA); // 降序排列
+                        });
+                    
+                    if (blogFiles.length === 0) {
+                        blogContentEl.innerHTML = `
+                            <div class="no-blogs">
+                                <p>暂无博客文章</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    // 创建博客列表
+                    let blogListHTML = '<ul class="blog-list">';
+                    
+                    // 处理每个博客文件
+                    const fetchPromises = blogFiles.map(file => {
+                        return fetch(file.download_url)
+                            .then(response => response.text())
+                            .then(content => {
+                                // 解析frontmatter和内容
+                                const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n/);
+                                let title = file.name.replace(/^\d{4}-\d{2}-\d{2}-/, '').replace('.md', '');
+                                let date = file.name.substring(0, 10);
+                                let excerpt = '';
+                                
+                                if (frontmatterMatch) {
+                                    const frontmatter = frontmatterMatch[1];
+                                    const titleMatch = frontmatter.match(/title:\s*"(.+?)"/);
+                                    const dateMatch = frontmatter.match(/date:\s*"(.+?)"/);
+                                    
+                                    if (titleMatch) title = titleMatch[1];
+                                    if (dateMatch) {
+                                        const dateObj = new Date(dateMatch[1]);
+                                        date = dateObj.toLocaleDateString('zh-CN', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric'
+                                        });
+                                    }
+                                    
+                                    // 提取正文的前150个字符作为摘要
+                                    const mainContent = content.replace(frontmatterMatch[0], '').trim();
+                                    excerpt = mainContent.substring(0, 150) + (mainContent.length > 150 ? '...' : '');
+                                }
+                                
+                                // 创建博客链接页面地址，使用文件名作为链接
+                                const blogUrl = `./posts/${file.name.replace('.md', '.html')}`;
+                                
+                                // 返回HTML片段
+                                return `
+                                    <li class="blog-item">
+                                        <h2 class="blog-title">
+                                            <a href="${blogUrl}">${title}</a>
+                                        </h2>
+                                        <span class="blog-date">${date}</span>
+                                        <p class="blog-excerpt">${excerpt}</p>
+                                        <a href="${blogUrl}" class="read-more">阅读全文 →</a>
+                                    </li>
+                                `;
+                            })
+                            .catch(error => {
+                                console.error(`加载博客 ${file.name} 失败:`, error);
+                                return `
+                                    <li class="blog-item">
+                                        <h2 class="blog-title">${file.name}</h2>
+                                        <p class="blog-excerpt">加载博客内容失败</p>
+                                    </li>
+                                `;
+                            });
+                    });
+                    
+                    // 处理所有博客内容加载完成后的操作
+                    Promise.all(fetchPromises)
+                        .then(blogItems => {
+                            blogListHTML += blogItems.join('') + '</ul>';
+                            blogContentEl.innerHTML = blogListHTML;
+                        })
+                        .catch(error => {
+                            console.error('加载博客内容失败:', error);
+                            blogContentEl.innerHTML = `
+                                <div class="no-blogs">
+                                    <p>加载博客内容出错</p>
+                                </div>
+                            `;
+                        });
+                })
+                .catch(error => {
+                    console.error('获取博客列表失败:', error);
+                    blogContentEl.innerHTML = `
+                        <div class="no-blogs">
+                            <p>获取博客列表失败: ${error.message}</p>
+                        </div>
+                    `;
+                });
+        });
+    </script>
+</body>
+</html>

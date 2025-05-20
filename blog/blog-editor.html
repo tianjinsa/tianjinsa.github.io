@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tianjinsa的博客编辑器 - 仅限授权管理员使用">
+    <meta name="robots" content="noindex, nofollow">
+    <title>博客编辑器 - Tianjinsa</title>
+    <!-- 网站图标 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+    <!-- 引入样式文件 -->
+    <link rel="stylesheet" href="blog-editor.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+        <!-- 编辑器界面 -->
+    <div class="editor-container">
+        <div class="editor-header">
+            <h1>博客编辑器</h1>
+            <div class="editor-actions">
+                <button id="logout-btn" class="btn-secondary">删除api密钥</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="blog-title">博客标题</label>
+            <input type="text" id="blog-title" name="title" placeholder="输入博客标题" required>
+        </div>
+
+        <h2>编辑内容</h2>
+        <p>使用Markdown格式编写您的内容。支持标题、链接、图片、代码块等。</p>
+
+        <div class="blog-editor">
+            <!-- <div class="editor-pane"> -->
+                <textarea id="blog-content" placeholder="在这里编写Markdown内容..."></textarea>            <!-- </div> -->
+            <div id="preview-pane-container" class="preview-pane-container">
+                <button id="fullscreen-preview-btn" class="fullscreen-btn" title="全屏预览">↗️</button>
+                <div id="preview-pane" class="preview-pane"></div>
+            </div>
+        </div>
+        
+        <!-- 全屏预览时的遮罩层 -->
+        <div id="fullscreen-overlay" class="fullscreen-overlay"></div>
+
+        <div class="form-group" style="margin-top: 20px; text-align: center;">
+            <button id="publish-btn" class="btn-primary">发布博客</button>
+        </div>
+
+        <div id="submit-status" class="submit-status"></div>
+
+        <div style="margin-top: 30px; color: #888888; font-size: 0.9em;">
+            <p>📝 <strong>Markdown指南:</strong></p>
+            <ul style="color: #b0b0b0; padding-left: 20px;">
+                <li># 标题1, ## 标题2, ### 标题3</li>
+                <li>**粗体文本**, *斜体文本*</li>
+                <li>[链接文本](链接URL)</li>
+                <li>![图片描述](图片URL)</li>
+                <li>```代码块```</li>
+                <li>`行内代码`</li>
+                <li>> 引用文本</li>
+                <li>- 无序列表项</li>
+                <li>1. 有序列表项</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- GitHub API操作提示 -->
+    <div style="text-align: center; margin: 40px 0; font-size: 0.8em; color: #777777;">
+        <p>本页面通过GitHub API直接提交内容到您的GitHub Pages仓库</p>
+        <p>请确保您已在blog-editor.js文件中设置了正确的仓库信息和密码哈希</p>
+    </div>
+
+    <!-- 引入JavaScript文件 -->
+    <script src="blog-editor.js"></script>
+</body>
+</html>
