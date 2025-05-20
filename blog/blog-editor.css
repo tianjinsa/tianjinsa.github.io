@@ -373,8 +373,8 @@ button:active {
 /* 全屏预览样式 */
 .preview-pane-container.fullscreen {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 5vh;
+    left: 5vw;
     width: 90vw;
     height: 90vh;
     max-height: 90vh; /* 覆盖之前的max-height */

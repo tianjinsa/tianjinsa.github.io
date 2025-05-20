@@ -21,8 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初始化Markdown预览
     initMarkdownPreview();
     
-    // 如果localStorage中有token，尝试自动登录
-    tryAutoLogin();
+    // 移除 tryAutoLogin() 调用，管理员密码总是在进入页面时要求
 });
 
 // 缓存DOM元素
@@ -107,31 +106,6 @@ function updatePreview() {
     elements.previewPane.innerHTML = `<div class="markdown-content">${html}</div>`;
 }
 
-// 尝试自动登录
-function tryAutoLogin() {
-    const token = localStorage.getItem('github_token');
-    if (token) {
-        // 验证token有效性
-        fetch(`https://api.github.com/repos/${CONFIG.GITHUB_REPO_OWNER}/${CONFIG.GITHUB_REPO_NAME}`, {
-            headers: {
-                'Authorization': `token ${token}`
-            }
-        })
-        .then(response => {
-            if (response.ok) {
-                showEditor();
-            } else {
-                // Token无效，清除并要求重新登录
-                localStorage.removeItem('github_token');
-            }
-        })
-        .catch(error => {
-            console.error('验证token时出错:', error);
-            localStorage.removeItem('github_token');
-        });
-    }
-}
-
 // 密码哈希计算函数
 async function hashPassword(password) {
     // 使用 SHA-256 算法
@@ -153,54 +127,22 @@ async function handleLogin(e) {
     const password = elements.passwordInput.value;
 
     if (!password) {
-        showMessage('请输入密码或个人访问令牌', 'error');
+        showMessage('请输入管理员密码', 'error'); // 更新提示信息
         return;
     }
 
     try {
-        // 检查是否是个人访问令牌
-        if (password.startsWith('ghp_')) {
-            localStorage.setItem('github_token', password);
-            showMessage('登录成功！', 'success');
-            setTimeout(() => {
-                showEditor();
-            }, 1000);
-            return;
-        }
-
         // 计算密码哈希
         const hashedPassword = await hashPassword(password);
 
         // 检查密码是否正确
         if (hashedPassword === CONFIG.PASSWORD_HASH) {
-            // 在真实环境中，这里应该调用GitHub API获取token
-            // 简化示例，您需要实现完整的OAuth流程或使用个人访问令牌
-            // 如果用户没有设置PASSWORD_HASH，则提示输入token
-            if (!CONFIG.PASSWORD_HASH) {
-                const token = prompt('请输入您的 GitHub 个人访问令牌:');
-                if (token) {
-                    localStorage.setItem('github_token', token);
-                    showMessage('登录成功！', 'success');
-                    setTimeout(() => {
-                        showEditor();
-                    }, 1000);
-                } else {
-                    showMessage('您取消了输入', 'error');
-                }
-                return;
-            }
-            // 此处保留了原始的dummyToken逻辑，但在实际场景下，
-            // 如果PASSWORD_HASH存在，应该优先考虑通过OAuth获取token，
-            // 或者提示用户其个人访问令牌已配置，此处简化为直接使用dummyToken
-            const dummyToken = 'dummy_token'; // 实际使用中替换为真实token
-            localStorage.setItem('github_token', dummyToken);
-
-            showMessage('登录成功！', 'success');
+            showMessage('管理员登录成功！', 'success'); // 更新提示信息
             setTimeout(() => {
                 showEditor();
             }, 1000);
         } else {
-            showMessage('密码或令牌不正确', 'error');
+            showMessage('管理员密码不正确', 'error'); // 更新提示信息
         }
     } catch (error) {
         console.error('登录时出错:', error);
@@ -231,7 +173,7 @@ function showEditor() {
 async function publishBlog() {
     const title = elements.titleInput.value.trim();
     const content = elements.contentTextarea.value.trim();
-    const token = localStorage.getItem('github_token');
+    let token = localStorage.getItem('github_token');
 
     if (!title || !content) {
         displaySubmitStatus('标题和内容不能为空', 'error');
@@ -239,9 +181,17 @@ async function publishBlog() {
     }
 
     if (!token) {
-        displaySubmitStatus('未授权，请重新登录', 'error');
-        showLogin();
-        return;
+        const userProvidedToken = prompt('请输入您的 GitHub 个人访问令牌 (Personal Access Token):');
+        if (userProvidedToken && userProvidedToken.trim() !== '') {
+            localStorage.setItem('github_token', userProvidedToken);
+            token = userProvidedToken;
+        } else {
+            displaySubmitStatus('需要 GitHub 个人访问令牌才能发布。', 'error');
+            // 确保按钮在用户取消提示后恢复可用状态
+            elements.publishButton.disabled = false;
+            elements.publishButton.textContent = '发布博客';
+            return;
+        }
     }
 
     // 显示加载状态
