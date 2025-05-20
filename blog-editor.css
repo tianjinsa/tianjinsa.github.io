@@ -186,14 +186,23 @@ button:active {
 
 .blog-editor {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* 默认单列布局 */
     gap: 20px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 900px) { /* 当屏幕宽度大于900px时，恢复双列布局 */
     .blog-editor {
         grid-template-columns: 1fr 1fr;
     }
+}
+
+.editor-pane, .preview-pane-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-pane-container {
+    position: relative; /* 用于定位全屏按钮 */
 }
 
 .preview-pane {
@@ -201,16 +210,55 @@ button:active {
     padding: 20px;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    min-height: 400px;
-    overflow-y: auto;
+    min-height: 300px; /* 限制最小高度 */
+    max-height: 60vh; /* 限制最大高度，允许滚动 */
+    overflow-y: auto; /* 内容超出时显示滚动条 */
+    flex-grow: 1; /* 使其填充可用空间 */
+}
+
+.fullscreen-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    padding: 8px 12px;
+    background-color: var(--primary-color);
+    color: var(--text-dark);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.fullscreen-btn:hover {
+    background-color: #6db5d9;
+}
+
+/* 全屏预览样式 */
+.preview-pane:fullscreen {
+    background-color: var(--content-bg); /* 全屏时使用更深的背景色 */
+    padding: 30px;
+    overflow-y: auto; /* 确保全屏时内容可滚动 */
+    max-height: 100vh; /* 全屏时高度占满视窗 */
+}
+
+.preview-pane:fullscreen .markdown-content {
+    font-size: 1.1em; /* 全屏时稍微增大字体 */
+}
+
+.preview-pane:fullscreen .fullscreen-btn {
+    /* 在全屏模式下，按钮可能需要调整或隐藏，具体取决于需求 */
+    /* 例如，可以考虑在进入全屏后隐藏按钮，或改变其文本/功能 */
 }
 
 textarea#blog-content {
-    min-height: 400px;
+    min-height: 300px; /* 限制最小高度 */
+    max-height: 60vh; /* 限制最大高度，允许滚动 */
     font-family: monospace;
     resize: vertical;
     line-height: 1.5;
     tab-size: 2;
+    overflow-y: auto; /* 内容超出时显示滚动条 */
 }
 
 .markdown-content h1 {
