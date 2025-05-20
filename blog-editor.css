@@ -148,7 +148,7 @@ button:active {
 /* 编辑器样式 */
 .editor-container {
     display: none;
-    max-width: 900px; /* 保持最大宽度 */
+    max-width: 872px; /* 保持最大宽度 */
     margin: 50px auto;
     padding: 30px;
     background-color: var(--content-bg);
