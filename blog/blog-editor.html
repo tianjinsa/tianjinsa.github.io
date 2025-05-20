@@ -13,28 +13,12 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <!-- 登录界面 -->
-    <div class="login-container">
-        <h1>博客管理员登录</h1>
-        <form id="login-form">
-            <div class="form-group">
-                <label for="password">请输入管理员密码</label>
-                <div class="password-container">
-                    <input type="password" id="password" name="password" placeholder="输入密码" required>
-                    <button type="button" id="toggle-password" class="toggle-password">👁️</button>
-                </div>
-            </div>
-            <button type="submit" class="btn-login">登录</button>
-        </form>
-        <div id="login-message" class="login-message"></div>
-    </div>
-
-    <!-- 编辑器界面 -->
+        <!-- 编辑器界面 -->
     <div class="editor-container">
         <div class="editor-header">
             <h1>博客编辑器</h1>
             <div class="editor-actions">
-                <button id="logout-btn" class="btn-secondary">退出登录</button>
+                <button id="logout-btn" class="btn-secondary">删除api密钥</button>
             </div>
         </div>
 
@@ -47,14 +31,16 @@
         <p>使用Markdown格式编写您的内容。支持标题、链接、图片、代码块等。</p>
 
         <div class="blog-editor">
-            <div class="editor-pane">
-                <textarea id="blog-content" placeholder="在这里编写Markdown内容..."></textarea>
-            </div>
+            <!-- <div class="editor-pane"> -->
+                <textarea id="blog-content" placeholder="在这里编写Markdown内容..."></textarea>            <!-- </div> -->
             <div id="preview-pane-container" class="preview-pane-container">
-                <div id="preview-pane" class="preview-pane"></div>
                 <button id="fullscreen-preview-btn" class="fullscreen-btn" title="全屏预览">↗️</button>
+                <div id="preview-pane" class="preview-pane"></div>
             </div>
         </div>
+        
+        <!-- 全屏预览时的遮罩层 -->
+        <div id="fullscreen-overlay" class="fullscreen-overlay"></div>
 
         <div class="form-group" style="margin-top: 20px; text-align: center;">
             <button id="publish-btn" class="btn-primary">发布博客</button>

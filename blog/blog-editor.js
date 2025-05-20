@@ -28,13 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // 缓存DOM元素
 function cacheElements() {
     elements = {
-        loginContainer: document.querySelector('.login-container'), // Will be kept hidden
+        //loginContainer: document.querySelector('.login-container'), // Will be kept hidden
         editorContainer: document.querySelector('.editor-container'),
         titleInput: document.getElementById('blog-title'),
         contentTextarea: document.getElementById('blog-content'),
         previewPane: document.getElementById('preview-pane'),
         previewPaneContainer: document.getElementById('preview-pane-container'), 
         fullscreenPreviewBtn: document.getElementById('fullscreen-preview-btn'), 
+        fullscreenOverlay: document.getElementById('fullscreen-overlay'),
         publishButton: document.getElementById('publish-btn'),
         logoutButton: document.getElementById('logout-btn'),
         submitStatus: document.getElementById('submit-status')
@@ -53,12 +54,24 @@ function setupEventListeners() {
     // 文章发布
     elements.publishButton.addEventListener('click', publishBlog);
     
-    // 登出
+    // 删除api密钥
     elements.logoutButton.addEventListener('click', logout);
 
     // 全屏预览按钮
     if (elements.fullscreenPreviewBtn) {
         elements.fullscreenPreviewBtn.addEventListener('click', toggleFullScreenPreview);
+    }
+    
+    // 添加ESC键监听器
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && elements.previewPaneContainer.classList.contains('fullscreen')) {
+            exitFullScreenPreview();
+        }
+    });
+    
+    // 添加点击遮罩层退出全屏预览
+    if (elements.fullscreenOverlay) {
+        elements.fullscreenOverlay.addEventListener('click', exitFullScreenPreview);
     }
 }
 
@@ -208,7 +221,7 @@ ${content}`;
         let errorMessage = '发布失败，请检查网络连接或GitHub配置。';
         if (error.message.includes('401')) {
             errorMessage = 'GitHub Token无效或已过期，请重新登录。';
-            logout(); // Token无效，强制登出
+            logout(); // Token无效，强制删除api密钥
         } else if (error.message.includes('404') && error.message.includes('repository not found')) {
             errorMessage = '仓库未找到，请检查GitHub用户名和仓库名配置。';
         } else if (error.message.includes('rate limit exceeded')) {
@@ -290,32 +303,177 @@ async function uploadToGithub(filePath, content, token, sha) {
 
 // 显示发布状态
 function displaySubmitStatus(message, type) {
+    // 保留原有的状态显示
     elements.submitStatus.textContent = message;
     elements.submitStatus.className = 'submit-status';
     elements.submitStatus.classList.add(type === 'error' ? 'error-message' : type === 'success' ? 'success-message' : 'info-message');
     elements.submitStatus.style.display = 'block';
+    
+    // 同时显示右下角弹出式通知
+    showToast(message, type);
+}
+
+// 右下角弹出式通知
+function showToast(message, type = 'info') {
+    // 移除任何可能已存在的通知
+    const existingToasts = document.querySelectorAll('.toast-notification');
+    existingToasts.forEach(toast => {
+        document.body.removeChild(toast);
+    });
+    
+    // 创建新的通知元素
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.classList.add(type === 'error' ? 'toast-error' : type === 'success' ? 'toast-success' : 'toast-info');
+    
+    // 设置通知内容
+    toast.innerHTML = `
+        <div class="toast-icon">${type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️'}</div>
+        <div class="toast-message">${message}</div>
+        <button class="toast-close">×</button>
+    `;
+    
+    // 添加到文档中
+    document.body.appendChild(toast);
+    
+    // 添加CSS样式（如果尚未添加）
+    if (!document.getElementById('toast-styles')) {
+        const style = document.createElement('style');
+        style.id = 'toast-styles';
+        style.textContent = `
+            .toast-notification {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                min-width: 250px;
+                max-width: 350px;
+                background-color: #f8f9fa;
+                color: #333;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                border-radius: 4px;
+                padding: 12px 15px;
+                display: flex;
+                align-items: center;
+                z-index: 9999;
+                animation: toast-slide-in 0.3s ease-out forwards;
+                font-size: 14px;
+            }
+            
+            @keyframes toast-slide-in {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes toast-slide-out {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            
+            .toast-icon {
+                margin-right: 10px;
+                font-size: 20px;
+            }
+            
+            .toast-message {
+                flex: 1;
+            }
+            
+            .toast-close {
+                background: none;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+                padding: 0 5px;
+                color: #777;
+            }
+            
+            .toast-success {
+                border-left: 4px solid #28a745;
+            }
+            
+            .toast-error {
+                border-left: 4px solid #dc3545;
+            }
+            
+            .toast-info {
+                border-left: 4px solid #17a2b8;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // 添加关闭按钮事件
+    const closeBtn = toast.querySelector('.toast-close');
+    closeBtn.addEventListener('click', () => {
+        toast.style.animation = 'toast-slide-out 0.3s ease-in forwards';
+        setTimeout(() => {
+            if (document.body.contains(toast)) {
+                document.body.removeChild(toast);
+            }
+        }, 300);
+    });
+    
+    // 5秒后自动关闭
+    setTimeout(() => {
+        if (document.body.contains(toast)) {
+            toast.style.animation = 'toast-slide-out 0.3s ease-in forwards';
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    document.body.removeChild(toast);
+                }
+            }, 300);
+        }
+    }, 5000);
+    
+    return toast;
 }
 
 // 切换预览区域全屏
 function toggleFullScreenPreview() {
     if (elements.previewPaneContainer) {
-        elements.previewPaneContainer.classList.toggle('fullscreen');
-        // 更新按钮文本/图标
-        if (elements.previewPaneContainer.classList.contains('fullscreen')) {
+        const isGoingFullscreen = !elements.previewPaneContainer.classList.contains('fullscreen');
+        
+        if (isGoingFullscreen) {
+            // 进入全屏模式
+            elements.previewPaneContainer.classList.add('fullscreen');
             elements.fullscreenPreviewBtn.textContent = '↙️'; // 指向左下的箭头，表示退出全屏
             elements.fullscreenPreviewBtn.title = '退出全屏';
+            
+            // 显示遮罩层
+            if (elements.fullscreenOverlay) {
+                elements.fullscreenOverlay.style.display = 'block';
+            }
         } else {
-            elements.fullscreenPreviewBtn.textContent = '↗️'; // 指向右上的箭头，表示全屏
-            elements.fullscreenPreviewBtn.title = '全屏预览';
+            // 退出全屏模式
+            exitFullScreenPreview();
         }
     }
 }
 
-// 登出
+// 退出全屏预览
+function exitFullScreenPreview() {
+    if (elements.previewPaneContainer && elements.previewPaneContainer.classList.contains('fullscreen')) {
+        elements.previewPaneContainer.classList.remove('fullscreen');
+        elements.fullscreenPreviewBtn.textContent = '↗️'; // 指向右上的箭头，表示全屏
+        elements.fullscreenPreviewBtn.title = '全屏预览';
+        
+        // 隐藏遮罩层
+        if (elements.fullscreenOverlay) {
+            elements.fullscreenOverlay.style.display = 'none';
+        }
+    }
+}
+
+// 删除api密钥并刷新页面
 function logout() {
     localStorage.removeItem('github_token');
-    if(elements.editorContainer) elements.editorContainer.style.display = 'none';
-    if(elements.loginContainer) elements.loginContainer.style.display = 'none'; // Keep login form hidden
-    if(elements.submitStatus) displaySubmitStatus('您已登出。下次发布时将需要 GitHub 令牌。', 'info');
-    else alert('您已登出。下次发布时将需要 GitHub 令牌。');
+    const message = 'GitHub API 令牌已清除。页面即将刷新...';
+    
+    // 使用右下角弹出式通知
+    showToast(message, 'info');
+    
+    // Reload the page after a short delay to allow the user to see the message
+    setTimeout(() => {
+        window.location.reload();
+    }, 3000); // 3-second delay before refresh
 }
