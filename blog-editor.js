@@ -36,6 +36,8 @@ function cacheElements() {
         titleInput: document.getElementById('blog-title'),
         contentTextarea: document.getElementById('blog-content'),
         previewPane: document.getElementById('preview-pane'),
+        previewPaneContainer: document.getElementById('preview-pane-container'), // 新增
+        fullscreenPreviewBtn: document.getElementById('fullscreen-preview-btn'), // 新增
         publishButton: document.getElementById('publish-btn'),
         logoutButton: document.getElementById('logout-btn'),
         togglePassword: document.getElementById('toggle-password'),
@@ -59,6 +61,11 @@ function setupEventListeners() {
     
     // 登出
     elements.logoutButton.addEventListener('click', logout);
+
+    // 全屏预览按钮
+    if (elements.fullscreenPreviewBtn) {
+        elements.fullscreenPreviewBtn.addEventListener('click', toggleFullScreenPreview);
+    }
 }
 
 // 切换密码可见性
@@ -81,46 +88,22 @@ function initMarkdownPreview() {
 // 更新Markdown预览
 function updatePreview() {
     const markdown = elements.contentTextarea.value;
-    
+
     if (markdown.trim() === '') {
         elements.previewPane.innerHTML = `<div class="markdown-content">
             <p>预览将显示在这里...</p>
         </div>`;
         return;
     }
-    
-    // 使用简单的正则表达式进行基本Markdown转换
-    // 注意：在生产环境中，最好使用成熟的Markdown解析库如marked.js
-    let html = markdown
-        // 标题
-        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-        // 粗体和斜体
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        // 链接
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
-        // 图片
-        .replace(/!\[([^\]]+)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">')
-        // 代码块
-        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-        // 行内代码
-        .replace(/`([^`]+)`/g, '<code>$1</code>')
-        // 引用
-        .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
-        // 列表
-        .replace(/^\s*\d+\. (.*$)/gm, '<ol><li>$1</li></ol>')
-        .replace(/^\s*- (.*$)/gm, '<ul><li>$1</li></ul>')
-        // 段落
-        .replace(/^(?!<[a-z])/gm, '<p>')
-        .replace(/^(.*?)$/gm, function(match) {
-            return match.startsWith('<') ? match : match + '</p>';
-        });
-    
-    // 清理重复的列表标签
-    html = html.replace(/<\/ol><ol>/g, '').replace(/<\/ul><ul>/g, '');
-    
+
+    // 使用 marked.js 进行Markdown转换
+    if (typeof marked === 'undefined') {
+        console.error('marked.js 未加载');
+        elements.previewPane.innerHTML = `<div class="markdown-content"><p style="color: red;">错误：Markdown预览功能不可用，marked.js 未加载。</p></div>`;
+        return;
+    }
+    const html = marked.parse(markdown);
+
     elements.previewPane.innerHTML = `<div class="markdown-content">${html}</div>`;
 }
 
@@ -166,31 +149,58 @@ async function hashPassword(password) {
 // 处理登录
 async function handleLogin(e) {
     e.preventDefault();
-    
+
     const password = elements.passwordInput.value;
-    
+
     if (!password) {
-        showMessage('请输入密码', 'error');
+        showMessage('请输入密码或个人访问令牌', 'error');
         return;
     }
-    
+
     try {
+        // 检查是否是个人访问令牌
+        if (password.startsWith('ghp_')) {
+            localStorage.setItem('github_token', password);
+            showMessage('登录成功！', 'success');
+            setTimeout(() => {
+                showEditor();
+            }, 1000);
+            return;
+        }
+
         // 计算密码哈希
         const hashedPassword = await hashPassword(password);
-        
+
         // 检查密码是否正确
         if (hashedPassword === CONFIG.PASSWORD_HASH) {
             // 在真实环境中，这里应该调用GitHub API获取token
             // 简化示例，您需要实现完整的OAuth流程或使用个人访问令牌
+            // 如果用户没有设置PASSWORD_HASH，则提示输入token
+            if (!CONFIG.PASSWORD_HASH) {
+                const token = prompt('请输入您的 GitHub 个人访问令牌:');
+                if (token) {
+                    localStorage.setItem('github_token', token);
+                    showMessage('登录成功！', 'success');
+                    setTimeout(() => {
+                        showEditor();
+                    }, 1000);
+                } else {
+                    showMessage('您取消了输入', 'error');
+                }
+                return;
+            }
+            // 此处保留了原始的dummyToken逻辑，但在实际场景下，
+            // 如果PASSWORD_HASH存在，应该优先考虑通过OAuth获取token，
+            // 或者提示用户其个人访问令牌已配置，此处简化为直接使用dummyToken
             const dummyToken = 'dummy_token'; // 实际使用中替换为真实token
             localStorage.setItem('github_token', dummyToken);
-            
+
             showMessage('登录成功！', 'success');
             setTimeout(() => {
                 showEditor();
             }, 1000);
         } else {
-            showMessage('密码不正确', 'error');
+            showMessage('密码或令牌不正确', 'error');
         }
     } catch (error) {
         console.error('登录时出错:', error);
@@ -346,6 +356,21 @@ async function createOrUpdateFileInGitHub(path, content, token) {
     } catch (error) {
         console.error('GitHub API请求失败:', error);
         throw error;
+    }
+}
+
+// 切换预览区域全屏
+function toggleFullScreenPreview() {
+    if (elements.previewPaneContainer) {
+        elements.previewPaneContainer.classList.toggle('fullscreen');
+        // 更新按钮文本/图标
+        if (elements.previewPaneContainer.classList.contains('fullscreen')) {
+            elements.fullscreenPreviewBtn.textContent = '↙️'; // 指向左下的箭头，表示退出全屏
+            elements.fullscreenPreviewBtn.title = '退出全屏';
+        } else {
+            elements.fullscreenPreviewBtn.textContent = '↗️'; // 指向右上的箭头，表示全屏
+            elements.fullscreenPreviewBtn.title = '全屏预览';
+        }
     }
 }
 

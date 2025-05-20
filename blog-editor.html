@@ -10,6 +10,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
     <!-- 引入样式文件 -->
     <link rel="stylesheet" href="blog-editor.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <!-- 登录界面 -->
@@ -49,7 +50,10 @@
             <div class="editor-pane">
                 <textarea id="blog-content" placeholder="在这里编写Markdown内容..."></textarea>
             </div>
-            <div id="preview-pane" class="preview-pane"></div>
+            <div id="preview-pane-container" class="preview-pane-container">
+                <div id="preview-pane" class="preview-pane"></div>
+                <button id="fullscreen-preview-btn" class="fullscreen-btn" title="全屏预览">↗️</button>
+            </div>
         </div>
 
         <div class="form-group" style="margin-top: 20px; text-align: center;">
