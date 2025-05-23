@@ -33,6 +33,10 @@ body {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* 增强阴影效果 */
     max-width: 800px; /* 增加最大宽度 */
     width: 90%; /* 响应式宽度 */
+    margin-left: auto; /* 左侧自动边距 */
+    margin-right: auto; /* 右侧自动边距 */
+    margin-top: 30px; /* 顶部边距 */
+    margin-bottom: 30px; /* 底部边距 */
 }
 
 /* 标题样式由blog-editor.css定义 */
